@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nut-tree/nut-js": "^2.1.1",
+    "@nut-tree-fork/nut-js": "4.2.4",
     "colors": "^1.4.0",
+    "express": "^4.21.2",
     "socket.io": "^4.5.1",
     "ws": "^8.8.1"
   }

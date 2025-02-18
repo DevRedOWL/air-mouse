@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src *">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="Content-Security-Policy" content="default-src *" />
+    <link rel="stylesheet" href="style.css" />
     <title>Mouse Client</title>
-</head>
+  </head>
 
-<body>
-    <div class="left"></div>
+  <body>
+    <!-- <div class="left"></div> -->
+    <div class="btns">
+      <button id="lmb_click">
+        <object type="image/svg+xml" data="lmb.svg" width="50" height="50">
+          LMB
+        </object>
+      </button>
+      <button id="rmb_click">
+        <object type="image/svg+xml" data="rmb.svg" width="50" height="50">
+          RMB
+        </object>
+      </button>
+      <button id="space" class="space">
+        <object type="image/svg+xml" data="sb.svg" width="50" height="50">
+          Space
+        </object>
+      </button>
+    </div>
     <script defer type="module" src="index.js"></script>
-</body>
-
+  </body>
 </html>
