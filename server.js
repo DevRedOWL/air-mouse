@@ -65,6 +65,16 @@ require("dns").lookup(
         control.keyboard.pressKey(control.Key.Space);
       });
 
+      // Volume
+      socket.on("volUp", async (message) => {
+        console.log(`(i) Received Mouse VolUp`.yellow);
+        control.keyboard.pressKey(control.Key.AudioVolUp);
+      });
+      socket.on("volDown", async (message) => {
+        console.log(`(i) Received Mouse VolDown`.yellow);
+        control.keyboard.pressKey(control.Key.AudioVolDown);
+      });
+
       // AUX
       socket.on("getPos", async (message) => {
         await control.mouse.getPosition().then(function (result) {
@@ -104,14 +114,9 @@ require("dns").lookup(
       res.sendFile(__dirname + "/client/style.css");
     });
 
-    app.get("/lmb.svg", (req, res) => {
-      res.sendFile(__dirname + "/client/lmb.svg");
-    });
-    app.get("/rmb.svg", (req, res) => {
-      res.sendFile(__dirname + "/client/rmb.svg");
-    });
-    app.get("/sb.svg", (req, res) => {
-      res.sendFile(__dirname + "/client/sb.svg");
+    app.get("/*.svg", (req, res) => {
+      const filePath = __dirname + "/client" + req.path;
+      res.sendFile(filePath);
     });
 
     io.listen(port);

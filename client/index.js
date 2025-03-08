@@ -50,6 +50,8 @@ var dy = 0;
 var lButton = document.getElementById("lmb_click");
 var rButton = document.getElementById("rmb_click");
 var sButton = document.getElementById("space");
+var volUpButton = document.getElementById("vol_up");
+var volDownButton = document.getElementById("vol_down");
 
 io.on("native-click", (e) => {
   Text({
@@ -74,6 +76,15 @@ lButton.onclick = function (e) {
 rButton.onclick = function (e) {
   io.emit("rclick", JSON.stringify({}));
 };
+
+volUpButton.onclick = function (e) {
+  io.emit("volUp", JSON.stringify({}));
+};
+
+volDownButton.onclick = function (e) {
+  io.emit("volDown", JSON.stringify({}));
+};
+
 
 sButton.onclick = function (e) {
   io.emit("space", JSON.stringify({}));

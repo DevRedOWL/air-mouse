@@ -47,6 +47,32 @@ body {
   bottom: 0;
 }
 
+button.abs {
+  cursor: pointer;
+  outline: none;
+  border: none;
+  border-radius: 16px;
+  text-decoration: none;
+  background: #212121;
+  color: white;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid #141414 !important;
+  height: 80px;
+  width: 80px;
+  /* width: min(50vw, 240px); */
+}
+
+.top-right-buttons {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  flex-direction: column;
+}
+
 .btns > button:hover,
 button:active {
   background: #1e1e1e;
