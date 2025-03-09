@@ -49,6 +49,9 @@ var dx = 0;
 var dy = 0;
 var lButton = document.getElementById("lmb_click");
 var mediaSwitchButton = document.getElementById("media_switch");
+var winButton = document.getElementById("alt_tab");
+// var mediaSwitchButtonSvg = document.getElementById("media_switch_icon");
+
 
 var classicButtons = document.getElementById("classic_buttons");
 var mediaButtons = document.getElementById("media_buttons");
@@ -63,15 +66,6 @@ io.on("native-click", (e) => {
 });
 
 // Handle clicks
-lButton.onclick = function (e) {
-  io.emit("lClick", JSON.stringify({}));
-  if (isLockedLMB) {
-    console.log("LMB unlock");
-    isLockedLMB = false;
-    lButton.children[0].style.setProperty("filter", "invert()");
-    io.emit("lRelease", JSON.stringify({}));
-  }
-};
 
 const buttonActions = [
   { id: "rmb_click", event: "rClick" },
@@ -81,7 +75,6 @@ const buttonActions = [
   { id: "rev_fwd", event: "revFwd" },
   { id: "play_pause", event: "playPause" },
   { id: "space", event: "space" },
-  { id: "alt_tab", event: "altTab" },
 ];
 
 document.addEventListener(
@@ -90,7 +83,6 @@ document.addEventListener(
     buttonActions.forEach(({ id, event }) => {
       const button = document.getElementById(id);
       if (button) {
-        console.log(button);
         button.onclick = () => io.emit(event, JSON.stringify({}));
       }
     });
@@ -106,18 +98,30 @@ mediaSwitchButton.onclick = function (e) {
   if (classicButtons.style.display === "none") {
     classicButtons.style.display = "flex";
     mediaButtons.style.display = "none";
+    // mediaSwitchButtonSvg.attributes.data = 'mouse.svg'
   } else {
     classicButtons.style.display = "none";
     mediaButtons.style.display = "flex";
+    // mediaSwitchButtonSvg.attributes.data = 'control.svg'
   }
 };
 
-// Handle LMB hold
-var timer;
+// Handle LMB
+lButton.onclick = function (e) {
+  io.emit("lClick", JSON.stringify({}));
+  if (isLockedLMB) {
+    console.log("LMB unlock");
+    isLockedLMB = false;
+    lButton.children[0].style.setProperty("filter", "invert()");
+    io.emit("lRelease", JSON.stringify({}));
+  }
+};
+
+var lmbTimer;
 var touchduration = 500; //length of time we want the user to touch before we do something
 let isLockedLMB = false;
 lButton.ontouchstart = function touchstart() {
-  timer = setTimeout((onlongtouch) => {
+  lmbTimer = setTimeout((onlongtouch) => {
     console.log("LMB lock");
     isLockedLMB = true;
     io.emit("lHold", JSON.stringify({}));
@@ -125,8 +129,32 @@ lButton.ontouchstart = function touchstart() {
   }, touchduration);
 };
 lButton.ontouchend = function touchend() {
-  //stops short touches from firing the event
-  if (timer) clearTimeout(timer); // clearTimeout, not cleartimeout..
+  if (lmbTimer) clearTimeout(lmbTimer); //stops short touches from firing the event
+};
+
+// Handle window hold
+winButton.onclick = function (e) {
+  io.emit("altTab", JSON.stringify({}));
+  if (isLockedWin) {
+    console.log("Win unlock");
+    isLockedWin = false;
+    winButton.children[0].style.setProperty("filter", "invert()");
+    io.emit("winRelease", JSON.stringify({}));
+  }
+};
+var winTimer;
+var touchduration = 500; 
+let isLockedWin = false;
+winButton.ontouchstart = function touchstart() {
+  winTimer = setTimeout((onlongtouch) => {
+    console.log("Win lock");
+    isLockedWin = true;
+    io.emit("winHold", JSON.stringify({}));
+    winButton.children[0].style.setProperty("filter", "contrast(0.5)");
+  }, touchduration);
+};
+winButton.ontouchend = function touchend() {
+  if (winTimer) clearTimeout(winTimer);
 };
 
 // Main loop

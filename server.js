@@ -109,6 +109,16 @@ require("dns").lookup(
         }, 1000);
       });
 
+      // Windows button
+      socket.on("winHold", async (message) => {
+        console.log(`(i) Received Mouse WinHold`.yellow);
+        control.keyboard.pressKey(control.Key.LeftWin, control.Key.LeftShift);
+      });
+      socket.on("winRelease", async (message) => {
+        console.log(`(i) Received Mouse WinRelease`.yellow);
+        control.keyboard.releaseKey(control.Key.LeftWin, control.Key.LeftShift);
+      });
+
       // AUX
       socket.on("getPos", async (message) => {
         await control.mouse.getPosition().then(function (result) {
