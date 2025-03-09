@@ -107,12 +107,13 @@ mediaSwitchButton.onclick = function (e) {
 
 // Handle LMB
 lButton.onclick = function (e) {
-  io.emit("lClick", JSON.stringify({}));
   if (isLockedLMB) {
     console.log("LMB unlock");
     isLockedLMB = false;
     lButton.children[0].style.setProperty("filter", "invert()");
     io.emit("lRelease", JSON.stringify({}));
+  } else {
+    io.emit("lClick", JSON.stringify({}));
   }
 };
 
@@ -133,12 +134,13 @@ lButton.ontouchend = function touchend() {
 
 // Handle window hold
 winButton.onclick = function (e) {
-  io.emit("altTab", JSON.stringify({}));
   if (isLockedWin) {
     console.log("Win unlock");
     isLockedWin = false;
     winButton.children[0].style.setProperty("filter", "invert()");
     io.emit("winRelease", JSON.stringify({}));
+  } else {
+    io.emit("altTab", JSON.stringify({}));
   }
 };
 var winTimer;
