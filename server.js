@@ -101,7 +101,7 @@ require("dns").lookup(
         console.log(`(i) Received Keyboard AltTab`.yellow);
         clearTimeout(altTabTimer);
         control.keyboard.pressKey(control.Key.LeftAlt);
-        control.keyboard.pressKey(control.Key.Tab);   
+        control.keyboard.pressKey(control.Key.Tab);
 
         altTabTimer = setTimeout(() => {
           control.keyboard.releaseKey(control.Key.Tab);
@@ -117,6 +117,29 @@ require("dns").lookup(
       socket.on("winRelease", async (message) => {
         console.log(`(i) Received Mouse WinRelease`.yellow);
         control.keyboard.releaseKey(control.Key.LeftWin, control.Key.LeftShift);
+      });
+
+      // Text input
+      socket.on("swipeUpAction", async (message) => {
+        try {
+          const { text } = JSON.parse(message);
+          console.log(`(i) Received Text: ${text}`.yellow);
+
+          // Copy text to clipboard
+          await control.clipboard.setContent(text);
+
+          // Paste the text using Ctrl+V (Windows/Linux) or Cmd+V (Mac)
+          await control.keyboard.pressKey(control.Key.LeftControl, control.Key.V);
+          await control.keyboard.releaseKey(control.Key.LeftControl, control.Key.V);
+
+          // On Mac, use LeftMeta instead of LeftControl
+          // await control.keyboard.pressKey(control.Key.LeftMeta, Key.V);
+          // await control.keyboard.releaseKey(control.Key.LeftMeta, Key.V);
+
+          console.log("(i) Text pasted successfully!".green);
+        } catch (error) {
+          console.error("(x) Error pasting text:", error);
+        }
       });
 
       // AUX

@@ -52,7 +52,6 @@ var mediaSwitchButton = document.getElementById("media_switch");
 var winButton = document.getElementById("alt_tab");
 // var mediaSwitchButtonSvg = document.getElementById("media_switch_icon");
 
-
 var classicButtons = document.getElementById("classic_buttons");
 var mediaButtons = document.getElementById("media_buttons");
 
@@ -143,7 +142,7 @@ winButton.onclick = function (e) {
   }
 };
 var winTimer;
-var touchduration = 500; 
+var touchduration = 500;
 let isLockedWin = false;
 winButton.ontouchstart = function touchstart() {
   winTimer = setTimeout((onlongtouch) => {
@@ -244,3 +243,50 @@ window.addEventListener("mousemove", () => {
 const FPS = 360;
 
 setInterval(main, 1000 / FPS);
+
+// Dragger space
+const swipeButton = document.getElementById("space");
+
+let startY = 0;
+let movedY = 0;
+const triggerDistance = 50; // Distance to trigger action and max swipe distance
+
+swipeButton.addEventListener("touchstart", (e) => {
+  startY = e.touches[0].clientY;
+});
+
+swipeButton.addEventListener("touchmove", (e) => {
+  movedY = e.touches[0].clientY - startY;
+
+  // Restrict movement to a max of -50px (upward only)
+  if (movedY < 0 && Math.abs(movedY) <= triggerDistance) {
+    swipeButton.style.transform = `translateY(${movedY}px)`;
+  }
+});
+
+swipeButton.addEventListener("touchend", () => {
+  if (Math.abs(movedY) >= triggerDistance) {
+    // Vibration feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(100); // Vibrate for 100ms
+    }
+
+    // Trigger action if swiped exactly 50px up
+    console.log("Swipe up action triggered!");
+  }
+
+  // Reset button position
+  swipeButton.style.transition = "transform 0.3s ease";
+  swipeButton.style.transform = "translateY(0)";
+
+  // Clear transition
+  setTimeout(() => {
+    swipeButton.style.transition = "";
+    const text = prompt();
+    io.emit("swipeUpAction", JSON.stringify({ text }));
+  }, 300);
+
+  // Reset values
+  startY = 0;
+  movedY = 0;
+});
