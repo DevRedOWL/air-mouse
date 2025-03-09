@@ -43,8 +43,11 @@ body {
 .btns {
   position: absolute;
   display: flex;
+  justify-content: space-around;
   flex-wrap: wrap;
   bottom: 0;
+  gap: 4px 0px;
+  padding: 0px 4px 8px 4px !important;
 }
 
 button.abs {
@@ -58,19 +61,21 @@ button.abs {
   -webkit-appearance: none;
   appearance: none;
   border: 2px solid #141414 !important;
-  height: 80px;
-  width: 80px;
+  height: 60px;
+  width: 60px;
   /* width: min(50vw, 240px); */
 }
 
 .top-right-buttons {
   position: fixed;
   top: 8px;
+  gap: 4px;
   right: 8px;
   display: flex;
   justify-content: flex-end;
-  flex-wrap: nowrap;
-  flex-direction: column;
+  flex-wrap: wrap; /* Usually nowrap */
+  max-width: 140px;
+  flex-direction: row; /* Usually column */
 }
 
 .btns > button:hover,
@@ -82,7 +87,7 @@ button:active {
   cursor: pointer;
   outline: none;
   border: none;
-
+  border-radius: 16px;
   text-decoration: none;
   background: #212121;
   color: white;
@@ -90,11 +95,11 @@ button:active {
   appearance: none;
   border: 2px solid #141414 !important;
   height: 120px;
-  width: 50vw;
+  width: calc(50vw - 8px);
   /* width: min(50vw, 240px); */
 }
 .btns > .space {
-  width: 100vw;
+  width: calc(100vw - 12px);
   /* width: min(100vw, 480px) !important; */
   height: 60px;
 }
@@ -107,4 +112,5 @@ object,
 svg {
   filter: invert();
   pointer-events: none;
+  margin-top: 3px !important;
 }

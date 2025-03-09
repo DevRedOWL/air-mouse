@@ -11,6 +11,7 @@ const port = 2499;
 const colors = require("colors");
 
 const control = require("@nut-tree-fork/nut-js");
+let altTabTimer;
 
 require("dns").lookup(
   require("os").hostname(),
@@ -48,13 +49,13 @@ require("dns").lookup(
         console.log(`(i) Received Mouse LeftRelease`.yellow);
         control.mouse.releaseButton(control.Button.LEFT);
       });
-      socket.on("lclick", async (message) => {
+      socket.on("lClick", async (message) => {
         console.log(`(i) Received Mouse LeftClick`.yellow);
         control.mouse.leftClick();
       });
 
       // RMB
-      socket.on("rclick", async (message) => {
+      socket.on("rClick", async (message) => {
         console.log(`(i) Received Mouse RightClick`.yellow);
         control.mouse.rightClick();
       });
@@ -63,16 +64,49 @@ require("dns").lookup(
       socket.on("space", async (message) => {
         console.log(`(i) Received Mouse Space`.yellow);
         control.keyboard.pressKey(control.Key.Space);
+        control.keyboard.releaseKey(control.Key.Space);
       });
 
       // Volume
       socket.on("volUp", async (message) => {
-        console.log(`(i) Received Mouse VolUp`.yellow);
+        console.log(`(i) Received Keyboard VolUp`.yellow);
         control.keyboard.pressKey(control.Key.AudioVolUp);
+        control.keyboard.releaseKey(control.Key.AudioVolUp);
       });
       socket.on("volDown", async (message) => {
-        console.log(`(i) Received Mouse VolDown`.yellow);
+        console.log(`(i) Received Keyboard VolDown`.yellow);
         control.keyboard.pressKey(control.Key.AudioVolDown);
+        control.keyboard.releaseKey(control.Key.AudioVolDown);
+      });
+
+      // Rewind
+      socket.on("revBck", async (message) => {
+        console.log(`(i) Received Keyboard RevBck`.yellow);
+        control.keyboard.pressKey(control.Key.Left);
+        control.keyboard.releaseKey(control.Key.Left);
+      });
+      socket.on("revFwd", async (message) => {
+        console.log(`(i) Received Keyboard RevFwd`.yellow);
+        control.keyboard.pressKey(control.Key.Right);
+        control.keyboard.releaseKey(control.Key.Right);
+      });
+      socket.on("playPause", async (message) => {
+        console.log(`(i) Received Keyboard PlayPause`.yellow);
+        control.keyboard.pressKey(control.Key.AudioPause);
+        control.keyboard.releaseKey(control.Key.AudioPause);
+      });
+
+      // AltTab
+      socket.on("altTab", async (message) => {
+        console.log(`(i) Received Keyboard AltTab`.yellow);
+        clearTimeout(altTabTimer);
+        control.keyboard.pressKey(control.Key.LeftAlt);
+        control.keyboard.pressKey(control.Key.Tab);   
+
+        altTabTimer = setTimeout(() => {
+          control.keyboard.releaseKey(control.Key.Tab);
+          control.keyboard.releaseKey(control.Key.LeftAlt);
+        }, 1000);
       });
 
       // AUX

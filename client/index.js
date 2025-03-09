@@ -48,10 +48,10 @@ var lastTouch = {};
 var dx = 0;
 var dy = 0;
 var lButton = document.getElementById("lmb_click");
-var rButton = document.getElementById("rmb_click");
-var sButton = document.getElementById("space");
-var volUpButton = document.getElementById("vol_up");
-var volDownButton = document.getElementById("vol_down");
+var mediaSwitchButton = document.getElementById("media_switch");
+
+var classicButtons = document.getElementById("classic_buttons");
+var mediaButtons = document.getElementById("media_buttons");
 
 io.on("native-click", (e) => {
   Text({
@@ -64,7 +64,7 @@ io.on("native-click", (e) => {
 
 // Handle clicks
 lButton.onclick = function (e) {
-  io.emit("lclick", JSON.stringify({}));
+  io.emit("lClick", JSON.stringify({}));
   if (isLockedLMB) {
     console.log("LMB unlock");
     isLockedLMB = false;
@@ -73,21 +73,43 @@ lButton.onclick = function (e) {
   }
 };
 
-rButton.onclick = function (e) {
-  io.emit("rclick", JSON.stringify({}));
-};
+const buttonActions = [
+  { id: "rmb_click", event: "rClick" },
+  { id: "vol_up", event: "volUp" },
+  { id: "vol_down", event: "volDown" },
+  { id: "rev_bck", event: "revBck" },
+  { id: "rev_fwd", event: "revFwd" },
+  { id: "play_pause", event: "playPause" },
+  { id: "space", event: "space" },
+  { id: "alt_tab", event: "altTab" },
+];
 
-volUpButton.onclick = function (e) {
-  io.emit("volUp", JSON.stringify({}));
-};
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    buttonActions.forEach(({ id, event }) => {
+      const button = document.getElementById(id);
+      if (button) {
+        console.log(button);
+        button.onclick = () => io.emit(event, JSON.stringify({}));
+      }
+    });
+    mediaButtons.style.display = "none";
+  },
+  false
+);
 
-volDownButton.onclick = function (e) {
-  io.emit("volDown", JSON.stringify({}));
-};
+mediaSwitchButton.onclick = function (e) {
+  console.log("clicked");
 
-
-sButton.onclick = function (e) {
-  io.emit("space", JSON.stringify({}));
+  // Toggle visibility
+  if (classicButtons.style.display === "none") {
+    classicButtons.style.display = "flex";
+    mediaButtons.style.display = "none";
+  } else {
+    classicButtons.style.display = "none";
+    mediaButtons.style.display = "flex";
+  }
 };
 
 // Handle LMB hold
