@@ -3,83 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Security-Policy" content="default-src *" />
     <link rel="stylesheet" href="style.css" />
     <title>Mouse Client</title>
   </head>
 
   <body>
-    <!-- <div class="left"></div> -->
+    <!-- Floating buttons -->
     <div class="top-right-buttons">
       <button id="alt_tab" class="abs">
-        <object type="image/svg+xml" data="icons/window.svg" width="40" height="40">
-          Alt Tab
-        </object>
+        <object type="image/svg+xml" data="icons/window.svg" width="40" height="40">Alt Tab</object>
       </button>
       <button id="vol_up" class="abs">
-        <object type="image/svg+xml" data="icons/vol_up.svg" width="40" height="40">
-          Vol UP
-        </object></button
+        <object type="image/svg+xml" data="icons/vol_up.svg" width="40" height="40">Vol UP</object></button
       ><button id="media_switch" class="abs">
-        <object
-          id="media_switch_icon"
-          type="image/svg+xml"
-          data="icons/video.svg"
-          width="35"
-          height="35"
-        >
-          Switch Btns
-        </object></button
+        <object id="media_switch_icon" type="image/svg+xml" data="icons/video.svg" width="35" height="35">Switch Btns</object></button
       ><button id="vol_down" class="abs">
-        <object type="image/svg+xml" data="icons/vol_down.svg" width="40" height="40">
-          Vol Down
-        </object>
+        <object type="image/svg+xml" data="icons/vol_down.svg" width="40" height="40">Vol Down</object>
       </button>
     </div>
 
+    <!-- Bottom buttons classic layer -->
     <div class="btns" id="classic_buttons">
       <button id="lmb_click">
-        <object type="image/svg+xml" data="icons/lmb.svg" width="50" height="50">
-          LMB
-        </object>
+        <object type="image/svg+xml" data="icons/lmb.svg" width="50" height="50">LMB</object>
       </button>
       <button id="rmb_click">
-        <object type="image/svg+xml" data="icons/rmb.svg" width="50" height="50">
-          RMB
-        </object>
+        <object type="image/svg+xml" data="icons/rmb.svg" width="50" height="50">RMB</object>
       </button>
       <button id="space" class="space">
-        <object type="image/svg+xml" data="icons/sb.svg" width="50" height="50">
-          Space
-        </object>
+        <object type="image/svg+xml" data="icons/sb.svg" width="50" height="50">Space</object>
       </button>
     </div>
+
+    <!-- Bottom buttons media layer -->
     <div class="btns" id="media_buttons">
       <button id="rev_bck">
-        <object type="image/svg+xml" data="icons/rew_bck.svg" width="50" height="50">
-          Rew Bck
-        </object>
+        <object type="image/svg+xml" data="icons/rew_bck.svg" width="50" height="50">Rew Bck</object>
       </button>
       <button id="rev_fwd">
-        <object type="image/svg+xml" data="icons/rew_fwd.svg" width="50" height="50">
-          Revind Fwd
-        </object>
+        <object type="image/svg+xml" data="icons/rew_fwd.svg" width="50" height="50">Revind Fwd</object>
       </button>
       <button id="play_pause" class="space">
-        <object
-          type="image/svg+xml"
-          data="icons/play_pause.svg"
-          width="40"
-          height="40"
-        >
-          Play / Pause
-        </object>
+        <object type="image/svg+xml" data="icons/play_pause.svg" width="40" height="40">Play / Pause</object>
       </button>
     </div>
+
+    <!-- Scripts -->
     <script defer type="module" src="index.js"></script>
+    <script defer type="module" src="buttons.js"></script>
   </body>
 </html>
