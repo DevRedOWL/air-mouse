@@ -43,14 +43,13 @@ const x = new Shape({
   background: "#242424",
 });
 
-var mouseClicked = false;
 var lastTouch = {};
 var dx = 0;
 var dy = 0;
 var lButton = document.getElementById("lmb_click");
 var mediaSwitchButton = document.getElementById("media_switch");
 var winButton = document.getElementById("alt_tab");
-// var mediaSwitchButtonSvg = document.getElementById("media_switch_icon");
+var mediaSwitchButtonSvg = document.getElementById("media_switch_icon");
 
 var classicButtons = document.getElementById("classic_buttons");
 var mediaButtons = document.getElementById("media_buttons");
@@ -91,17 +90,15 @@ document.addEventListener(
 );
 
 mediaSwitchButton.onclick = function (e) {
-  console.log("clicked");
-
   // Toggle visibility
   if (classicButtons.style.display === "none") {
     classicButtons.style.display = "flex";
     mediaButtons.style.display = "none";
-    // mediaSwitchButtonSvg.attributes.data = 'mouse.svg'
+    mediaSwitchButtonSvg.setAttribute("data", "icons/video.svg");
   } else {
     classicButtons.style.display = "none";
     mediaButtons.style.display = "flex";
-    // mediaSwitchButtonSvg.attributes.data = 'control.svg'
+    mediaSwitchButtonSvg.setAttribute("data", "icons/mouse.svg");
   }
 };
 
@@ -185,7 +182,6 @@ function main() {
         JSON.stringify({
           deltaX: dx + 1,
           deltaY: dy + 1,
-          mouseClicked: mouseClicked,
         })
       );
       x.x = world.mouse.x;
@@ -227,13 +223,28 @@ function main() {
     y: 50,
     background: "#242424",
   });
-  mouseClicked &&
-    Text({
-      text: "MouseClicked",
-      x: 10,
-      y: 70,
-      background: "#242424",
-    });
+
+  Text({
+    text: "Зажмите кнопку переключения окон для перемещения",
+    x: 10,
+    y: world.height - 80,
+    size: "14px",
+    background: "#242424",
+  });
+  Text({
+    text: "между экранами при помощи стрелок перемотки",
+    x: 10,
+    y: world.height - 60,
+    size: "14px",
+    background: "#242424",
+  });
+  Text({
+    text: "Потяните пробел для ввода текста",
+    x: 10,
+    y: world.height - 30,
+    size: "14px",
+    background: "#242424",
+  });
 }
 
 window.addEventListener("mousemove", () => {
@@ -267,14 +278,17 @@ swipeButton.addEventListener("touchmove", (e) => {
 });
 
 swipeButton.addEventListener("touchend", () => {
-  if (Math.abs(movedY) >= triggerDistance) {
+  // Trigger action if swiped exactly 50px up
+  if (Math.abs(movedY) >= triggerDistance - 10) {
     // Vibration feedback
     if (navigator.vibrate) {
       navigator.vibrate(100); // Vibrate for 100ms
     }
-
-    // Trigger action if swiped exactly 50px up
     console.log("Swipe up action triggered!");
+    setTimeout(() => {
+      const text = prompt('Введите текст на клавиатуре');
+      io.emit("swipeUpAction", JSON.stringify({ text }));
+    }, 300);
   }
 
   // Reset button position
@@ -282,11 +296,7 @@ swipeButton.addEventListener("touchend", () => {
   swipeButton.style.transform = "translateY(0)";
 
   // Clear transition
-  setTimeout(() => {
-    swipeButton.style.transition = "";
-    const text = prompt();
-    io.emit("swipeUpAction", JSON.stringify({ text }));
-  }, 300);
+  swipeButton.style.transition = "";
 
   // Reset values
   startY = 0;

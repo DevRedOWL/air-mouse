@@ -1,4 +1,5 @@
-const app = require("express")();
+const express = require("express");
+const app = express();
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 
@@ -10,8 +11,26 @@ const io = new Server(server, {
 const port = 2499;
 const colors = require("colors");
 
-const control = require("@nut-tree-fork/nut-js");
+const {
+  Key,
+  keyboard,
+  mouse,
+  Button,
+  clipboard,
+  Point,
+} = require("@nut-tree-fork/nut-js");
 let altTabTimer;
+
+// MacOS and Windows support
+var isWindows = process.platform === "win32";
+const serviceButtons = {
+  LeftControl: isWindows ? Key.LeftControl : Key.LeftSuper,
+  LeftWindows: isWindows ? Key.LeftWin : Key.LeftSuper,
+  LeftAlt: isWindows ? Key.LeftAlt : Key.LeftSuper,
+};
+console.log(`Running with ${isWindows ? "Windows API" : "MacOS API"}`.cyan);
+
+app.use(express.static(__dirname + "/client"));
 
 require("dns").lookup(
   require("os").hostname(),
@@ -28,95 +47,98 @@ require("dns").lookup(
           `(i) Received Mouse DeltaPosition: X:${deltaX}, Y:${deltaY}`.yellow
         );
 
-        var mouseX = await control.mouse.getPosition().then(function (result) {
+        var mouseX = await mouse.getPosition().then(function (result) {
           return result.x;
         });
-        var mouseY = await control.mouse.getPosition().then(function (result) {
+        var mouseY = await mouse.getPosition().then(function (result) {
           return result.y > 0 ? result.y : -result.y;
         });
         var scale = 1.1;
-        control.mouse.setPosition(
-          new control.Point(mouseX + deltaX * scale, mouseY + deltaY * scale)
+        mouse.setPosition(
+          new Point(mouseX + deltaX * scale, mouseY + deltaY * scale)
         );
       });
 
       // LMB
       socket.on("lHold", async (message) => {
         console.log(`(i) Received Mouse LeftHold`.yellow);
-        control.mouse.pressButton(control.Button.LEFT);
+        await mouse.pressButton(Button.LEFT);
       });
       socket.on("lRelease", async (message) => {
         console.log(`(i) Received Mouse LeftRelease`.yellow);
-        control.mouse.releaseButton(control.Button.LEFT);
+        await mouse.releaseButton(Button.LEFT);
       });
       socket.on("lClick", async (message) => {
         console.log(`(i) Received Mouse LeftClick`.yellow);
-        control.mouse.leftClick();
+        await mouse.leftClick();
       });
 
       // RMB
       socket.on("rClick", async (message) => {
         console.log(`(i) Received Mouse RightClick`.yellow);
-        control.mouse.rightClick();
+        await mouse.rightClick();
       });
 
       // SB
       socket.on("space", async (message) => {
         console.log(`(i) Received Mouse Space`.yellow);
-        control.keyboard.pressKey(control.Key.Space);
-        control.keyboard.releaseKey(control.Key.Space);
+        await keyboard.pressKey(Key.Space);
+        await keyboard.releaseKey(Key.Space);
       });
 
       // Volume
       socket.on("volUp", async (message) => {
         console.log(`(i) Received Keyboard VolUp`.yellow);
-        control.keyboard.pressKey(control.Key.AudioVolUp);
-        control.keyboard.releaseKey(control.Key.AudioVolUp);
+        await keyboard.pressKey(Key.AudioVolUp);
+        await keyboard.releaseKey(Key.AudioVolUp);
       });
       socket.on("volDown", async (message) => {
         console.log(`(i) Received Keyboard VolDown`.yellow);
-        control.keyboard.pressKey(control.Key.AudioVolDown);
-        control.keyboard.releaseKey(control.Key.AudioVolDown);
+        await keyboard.pressKey(Key.AudioVolDown);
+        await keyboard.releaseKey(Key.AudioVolDown);
       });
 
       // Rewind
       socket.on("revBck", async (message) => {
         console.log(`(i) Received Keyboard RevBck`.yellow);
-        control.keyboard.pressKey(control.Key.Left);
-        control.keyboard.releaseKey(control.Key.Left);
+        await keyboard.pressKey(Key.Left);
+        await keyboard.releaseKey(Key.Left);
       });
       socket.on("revFwd", async (message) => {
         console.log(`(i) Received Keyboard RevFwd`.yellow);
-        control.keyboard.pressKey(control.Key.Right);
-        control.keyboard.releaseKey(control.Key.Right);
+        await keyboard.pressKey(Key.Right);
+        await keyboard.releaseKey(Key.Right);
       });
       socket.on("playPause", async (message) => {
         console.log(`(i) Received Keyboard PlayPause`.yellow);
-        control.keyboard.pressKey(control.Key.AudioPause);
-        control.keyboard.releaseKey(control.Key.AudioPause);
+        await keyboard.pressKey(Key.AudioPause);
+        await keyboard.releaseKey(Key.AudioPause);
       });
 
       // AltTab
       socket.on("altTab", async (message) => {
         console.log(`(i) Received Keyboard AltTab`.yellow);
-        clearTimeout(altTabTimer);
-        control.keyboard.pressKey(control.Key.LeftAlt);
-        control.keyboard.pressKey(control.Key.Tab);
+        if (altTabTimer) clearTimeout(altTabTimer);
+        await keyboard.pressKey(serviceButtons.LeftAlt, Key.Tab);
+        await keyboard.releaseKey(Key.Tab);
 
-        altTabTimer = setTimeout(() => {
-          control.keyboard.releaseKey(control.Key.Tab);
-          control.keyboard.releaseKey(control.Key.LeftAlt);
+        altTabTimer = setTimeout(async () => {
+          try {
+            await keyboard.releaseKey(serviceButtons.LeftAlt, Key.Tab);
+          } catch (ex) {
+            console.error(ex);
+          }
         }, 1000);
       });
 
       // Windows button
       socket.on("winHold", async (message) => {
         console.log(`(i) Received Mouse WinHold`.yellow);
-        control.keyboard.pressKey(control.Key.LeftWin, control.Key.LeftShift);
+        await keyboard.pressKey(serviceButtons.LeftWindows, Key.LeftShift);
       });
       socket.on("winRelease", async (message) => {
         console.log(`(i) Received Mouse WinRelease`.yellow);
-        control.keyboard.releaseKey(control.Key.LeftWin, control.Key.LeftShift);
+        await keyboard.releaseKey(serviceButtons.LeftWindows, Key.LeftShift);
       });
 
       // Text input
@@ -126,17 +148,13 @@ require("dns").lookup(
           console.log(`(i) Received Text: ${text}`.yellow);
 
           // Copy text to clipboard
-          await control.clipboard.setContent(text);
+          await clipboard.setContent(text);
 
           // Paste the text using Ctrl+V (Windows/Linux) or Cmd+V (Mac)
-          await control.keyboard.pressKey(control.Key.LeftControl, control.Key.V);
-          await control.keyboard.releaseKey(control.Key.LeftControl, control.Key.V);
+          await keyboard.pressKey(serviceButtons.LeftControl, Key.V);
 
-          // On Mac, use LeftMeta instead of LeftControl
-          // await control.keyboard.pressKey(control.Key.LeftMeta, Key.V);
-          // await control.keyboard.releaseKey(control.Key.LeftMeta, Key.V);
-
-          console.log("(i) Text pasted successfully!".green);
+          await keyboard.releaseKey(serviceButtons.LeftControl, Key.V),
+            console.log("(i) Text pasted successfully!".green);
         } catch (error) {
           console.error("(x) Error pasting text:", error);
         }
@@ -144,9 +162,13 @@ require("dns").lookup(
 
       // AUX
       socket.on("getPos", async (message) => {
-        await control.mouse.getPosition().then(function (result) {
+        await mouse.getPosition().then(function (result) {
           console.log(result.x, result.y);
         });
+      });
+      socket.on("disconnect", () => {
+        console.log("[-] Client Disconnected".red);
+        if (altTabTimer) clearTimeout(altTabTimer);
       });
     });
 
@@ -159,31 +181,6 @@ require("dns").lookup(
 
     app.get("/", (req, res) => {
       res.sendFile(__dirname + "/client/index.html");
-    });
-
-    app.get("/index.js", (req, res) => {
-      res.sendFile(__dirname + "/client/index.js");
-    });
-
-    app.get("/life.js", (req, res) => {
-      res.sendFile(__dirname + "/client/life.js");
-    });
-
-    app.get("/events.js", (req, res) => {
-      res.sendFile(__dirname + "/client/events.js");
-    });
-
-    app.get("/socketio.js", (req, res) => {
-      res.sendFile(__dirname + "/client/socketio.js");
-    });
-
-    app.get("/style.css", (req, res) => {
-      res.sendFile(__dirname + "/client/style.css");
-    });
-
-    app.get("/*.svg", (req, res) => {
-      const filePath = __dirname + "/client" + req.path;
-      res.sendFile(filePath);
     });
 
     io.listen(port);

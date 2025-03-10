@@ -19,6 +19,7 @@ body {
 
   background-image: radial-gradient(#313131 1px, #141414 0);
   background-size: 20px 20px;
+  background-position: top;
 }
 
 * {
@@ -47,7 +48,7 @@ body {
   flex-wrap: wrap;
   bottom: 0;
   gap: 4px 0px;
-  padding: 0px 4px 8px 4px !important;
+  padding: 0px 4px 8px 3px !important;
 }
 
 button.abs {
@@ -110,6 +111,7 @@ canvas {
 
 object,
 svg {
+  /* filter: invert(20%) sepia(97%) saturate(4013%) hue-rotate(199deg) brightness(93%) contrast(127%); */
   filter: invert();
   pointer-events: none;
   margin-top: 3px !important;
