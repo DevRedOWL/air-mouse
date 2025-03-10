@@ -227,19 +227,19 @@ function main() {
   Text({
     text: "Зажмите кнопку переключения окон для перемещения",
     x: 10,
-    y: world.height - 80,
+    y: world.height - 65,
     size: "14px",
     background: "#242424",
   });
   Text({
     text: "между экранами при помощи стрелок перемотки",
     x: 10,
-    y: world.height - 60,
+    y: world.height - 50,
     size: "14px",
     background: "#242424",
   });
   Text({
-    text: "Потяните пробел для ввода текста",
+    text: "Потяните пробел вверх для ввода текста",
     x: 10,
     y: world.height - 30,
     size: "14px",
