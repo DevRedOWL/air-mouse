@@ -1,7 +1,9 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#462512",
-        "titleBar.activeBackground": "#62331A",
-        "titleBar.activeForeground": "#FDFAF9"
-    }
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#462512",
+    "titleBar.activeBackground": "#62331A",
+    "titleBar.activeForeground": "#FDFAF9"
+  },
+  "prettier.printWidth": 200,
+  "html.format.wrapLineLength": 0 // Or 200, none worked
 }
