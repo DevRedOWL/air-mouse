@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
+const bodyParser = require("body-parser");
 const { Server } = require("socket.io");
 
 const io = new Server(server, {
@@ -24,6 +25,7 @@ const serviceButtons = {
 console.log(`Running with ${isWindows ? "Windows API" : "MacOS API"}`.cyan);
 
 app.use(express.static(__dirname + "/client"));
+app.use(express.json());
 
 require("dns").lookup(require("os").hostname(), { family: 4 }, function (err, localAddress, fam) {
   io.on("connection", (socket) => {
@@ -138,6 +140,30 @@ require("dns").lookup(require("os").hostname(), { family: 4 }, function (err, lo
 
   app.get("/", (req, res) => {
     res.sendFile(__dirname + "/client/index.html");
+  });
+
+  app.get("/pause", async (req, res) => {
+    console.log(`(i) Requrested play/pause`.green);
+    await keyboard.pressKey(Key.AudioPause);
+    await keyboard.releaseKey(Key.AudioPause);
+    res.sendStatus(200);
+  });
+
+  app.post("/volume", async (req, res) => {
+    const { action, value } = req.body || {};
+    if (!action || !value) return res.sendStatus(400);
+
+    const volumeSteps = Math.min(Math.max(Number(value) || 1, 1), 50);
+    const keyAction = action === "up" ? Key.AudioVolUp : Key.AudioVolDown;
+
+    console.log(`(i) Pressing volume ${action} button ${volumeSteps} times`.green);
+
+    for (let i = 0; i < volumeSteps; i++) {
+      await keyboard.pressKey(keyAction);
+      await keyboard.releaseKey(keyAction);
+    }
+
+    res.sendStatus(200);
   });
 
   io.listen(port);
