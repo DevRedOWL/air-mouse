@@ -74,6 +74,26 @@ require("dns").lookup(require("os").hostname(), { family: 4 }, function (err, lo
       console.log(`(i) Received Mouse RightClick`.yellow);
       await mouse.rightClick();
     });
+    socket.on("doubleClick", async (message) => {
+      console.log(`(i) Received double-tap → single click`.yellow);
+      await mouse.leftClick();
+    });
+    socket.on("scroll", async (message) => {
+      const { direction, amount } = JSON.parse(message);
+      const steps = Math.min(Math.max(Math.abs(amount) || 1, 1), 60);
+      try {
+        if (direction > 0) await mouse.scrollUp(steps);
+        else await mouse.scrollDown(steps);
+      } catch (err) {
+        console.warn("(w) Mouse scroll failed, using PageUp/PageDown".yellow, err?.message || err);
+        const key = direction > 0 ? Key.PageUp : Key.PageDown;
+        for (let i = 0; i < steps; i++) {
+          await keyboard.pressKey(key);
+          await keyboard.releaseKey(key);
+          await new Promise((r) => setTimeout(r, 25));
+        }
+      }
+    });
 
     // Register simple key press and release
     socket.on("keyPress", async (event) => {

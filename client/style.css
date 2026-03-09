@@ -67,6 +67,28 @@ button.abs {
   /* width: min(50vw, 240px); */
 }
 
+/* Vertical scroll strip: fixed on the right, does not affect layout */
+.scroll-strip {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 36%;
+  min-height: 120px;
+  max-height: 280px;
+  border-radius: 12px 0 0 12px;
+  background: rgba(33, 33, 33, 0.85);
+  border: 1px solid rgba(20, 20, 20, 0.9);
+  border-right: none;
+  z-index: 9998;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.scroll-strip:active {
+  background: rgba(45, 45, 45, 0.9);
+}
+
 .top-right-buttons {
   position: fixed;
   top: 8px;
