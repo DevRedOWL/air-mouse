@@ -30,6 +30,11 @@ app.use(express.json());
 require("dns").lookup(require("os").hostname(), { family: 4 }, function (err, localAddress, fam) {
   io.on("connection", (socket) => {
     console.log("[+] Client Connected".cyan);
+    // Track position server-side: getPosition() on multi-monitor (Windows) often returns wrong
+    // values on secondary display (e.g. 0,0 or primary edge), causing cursor to snap to top-left.
+    // We init once from getPosition(), then only apply deltas to our tracked position.
+    var trackedPosition = null;
+
     socket.on("message", async (message) => {
       var obj = JSON.parse(message);
       var deltaX = obj.deltaX;
@@ -37,14 +42,17 @@ require("dns").lookup(require("os").hostname(), { family: 4 }, function (err, lo
 
       console.log(`(i) Received Mouse DeltaPosition: X:${deltaX}, Y:${deltaY}`.yellow);
 
-      var mouseX = await mouse.getPosition().then(function (result) {
-        return result.x;
-      });
-      var mouseY = await mouse.getPosition().then(function (result) {
-        return result.y > 0 ? result.y : -result.y;
-      });
+      if (trackedPosition === null) {
+        var pos = await mouse.getPosition();
+        trackedPosition = { x: pos.x, y: pos.y };
+      }
+
       var scale = 1.1;
-      mouse.setPosition(new Point(mouseX + deltaX * scale, mouseY + deltaY * scale));
+      var newX = trackedPosition.x + deltaX * scale;
+      var newY = trackedPosition.y + deltaY * scale;
+
+      mouse.setPosition(new Point(newX, newY));
+      trackedPosition = { x: newX, y: newY };
     });
 
     // LMB
